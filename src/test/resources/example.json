@@ -1,0 +1,19 @@
+{"name": "X12", "children": [
+    {"name": "ISA", "segment_id": "ISA", "children": [
+        {"name": "GS", "segment_id": "GS", "children": [
+            {"name": "ST", "segment_id": "ST", "segment_qualifiers": ["835"], "qualifier_position": 1, "children": [
+                {"name": "1000A", "segment_id": "N1", "segment_qualifiers": ["PR"], "qualifier_position": 1},
+                {"name": "1000B", "segment_id": "N1", "segment_qualifiers": ["PE"], "qualifier_position": 1},
+                {"name": "2000", "segment_id": "LX", "children": [
+                    {"name": "2100", "segment_id": "CLP", "children": [
+                        {"name": "2110", "segment_id": "SVC"}
+                    ]}
+                ]}
+            ]},
+            {"name": "SE", "segment_id": "SE"}
+        ]},
+        {"name": "GE", "segment_id": "GE"}
+    ]
+    },
+    {"name": "IEA", "segment_id": "IEA"}
+]}
