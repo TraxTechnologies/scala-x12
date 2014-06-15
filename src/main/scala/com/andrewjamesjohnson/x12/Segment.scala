@@ -1,9 +1,8 @@
 package com.andrewjamesjohnson.x12
 
-import java.util.regex.Pattern
-
-case class Segment(value : String, elementSeparator : String, compositeElementSeparator : String) extends X12[Element, Element] {
-  lazy val pieces = value.split(Pattern.quote(elementSeparator)).map(e => Element(e, compositeElementSeparator))
+case class Segment(value : String, elementSeparator : Char, compositeElementSeparator : Char) extends X12[Element, Element] {
+  val elementSeparatorStr = elementSeparator.toString
+  lazy val pieces = value.split(elementSeparator).map(e => Element(e, compositeElementSeparator))
 
   override def children: Seq[Element] = pieces
 
@@ -12,4 +11,8 @@ case class Segment(value : String, elementSeparator : String, compositeElementSe
   override def iterator: Iterator[Element] = pieces.iterator
 
   override def name: String = pieces(0).name
+
+  override def apply(idx: Int): Element = pieces(idx)
+
+  override def toString(): String = pieces.map(_.toString()).mkString(elementSeparatorStr)
 }

@@ -23,7 +23,7 @@ object JsonConfigReader extends X12ConfigReader {
 
   override def read(url: URL): X12ConfigNode = decodeJson(Source.fromURL(url).mkString)
 
-  def decodeJson(input : String) : X12ConfigNode = {
+  private def decodeJson(input : String) : X12ConfigNode = {
     input.decodeOption[X12ConfigNode] match {
       case Some(x) => x
       case _ => throw new RuntimeException("Invalid JSON provided")
@@ -34,7 +34,7 @@ object JsonConfigReader extends X12ConfigReader {
 
   override def validate(url: URL): Option[String] = validateJson(Source.fromURL(url).mkString)
 
-  def validateJson(input : String): Option[String] = {
+  private def validateJson(input : String): Option[String] = {
     input.parse match {
       case -\/(s) => Some(s)
       case _ => None
