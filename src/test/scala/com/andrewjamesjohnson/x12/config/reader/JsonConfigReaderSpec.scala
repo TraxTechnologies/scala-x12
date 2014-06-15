@@ -21,5 +21,9 @@ class JsonConfigReaderSpec extends Specification {
                   X12ConfigNode("IEA",Some("IEA"),None,None,None))))
       node mustEqual expected
     }
+
+    "return no error message for valid JSON" in {
+      JsonConfigReader.validate(getClass.getResource("/example.json")) mustEqual None
+    }
   }
 }
