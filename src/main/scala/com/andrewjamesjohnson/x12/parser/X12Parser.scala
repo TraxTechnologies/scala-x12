@@ -31,14 +31,14 @@ object X12Parser {
     val quotedSeparator = Pattern.quote(segmentSeparator.toString)
     val segmentDelimiter = "%1$s\r\n|%1$s\n|%1$s".format(quotedSeparator)
 
-    val segments = input.split(segmentDelimiter).map(s => Segment(s, elementSeparator, compositeElementSeparator)).toList
+    val segments = input.split(segmentDelimiter).map(s => Segment(s, elementSeparator, compositeElementSeparator))
     val matchedSegments = mutable.LinkedHashMap((for(segment <- segments)
       yield (segment, getMatchingConfigNode(config.tree.loc, segment))):_*)
     buildDocument(matchedSegments, segments, config, name, segmentSeparator)
   }
 
   private def buildDocument(matchedSegments: mutable.LinkedHashMap[Segment, Option[TreeLoc[X12ConfigNode]]],
-                   segments : List[Segment], config : X12Config, name : String, segmentSeparator : Char) : Document = {
+                   segments : Array[Segment], config : X12Config, name : String, segmentSeparator : Char) : Document = {
     val rootForest = ListBuffer[Tree[ParseTreeNode]]()
     var remaining = segments
     config.tree.subForest.foreach(tree => {
@@ -57,7 +57,7 @@ object X12Parser {
   }
 
   private def buildTree(matchedSegments: mutable.LinkedHashMap[Segment, Option[TreeLoc[X12ConfigNode]]],
-                         segments : List[Segment], node : TreeLoc[X12ConfigNode]) : (Tree[ParseTreeNode], List[Segment]) = {
+                         segments : Array[Segment], node : TreeLoc[X12ConfigNode]) : (Tree[ParseTreeNode], Array[Segment]) = {
     val (currSegments, rest) = segments.span(s => belongsToCurrent(node, matchedSegments(s)))
     node.hasChildren match {
       case false => (ParseTreeNode(currSegments, node.getLabel).leaf, rest)
@@ -94,6 +94,6 @@ object X12Parser {
   }
 }
 
-case class ParseTreeNode(segments : List[Segment], config : X12ConfigNode) extends TreeV[ParseTreeNode] {
+case class ParseTreeNode(segments : Seq[Segment], config : X12ConfigNode) extends TreeV[ParseTreeNode] {
   override def self: ParseTreeNode = this
 }
