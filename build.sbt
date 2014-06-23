@@ -1,9 +1,10 @@
 name := "scala-x12"
 
-version := "1.0"
+version := "0.1"
 
 libraryDependencies ++= Seq(
-  "io.argonaut" %% "argonaut" % "6.0.4"
+  "io.argonaut" %% "argonaut" % "6.0.4",
+  "org.scalaz" %% "scalaz-core" % "7.0.6"
 )
 
 libraryDependencies ++= Seq(
