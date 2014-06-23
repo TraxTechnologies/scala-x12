@@ -3,9 +3,6 @@ package com.andrewjamesjohnson.x12.config.reader
 import com.andrewjamesjohnson.x12.config.{X12Config, X12ConfigNode}
 import org.specs2.mutable._
 
-import scalaz.{Tree, Equal}
-import scalaz.Tree._
-
 class JsonConfigReaderSpec extends Specification {
   "JsonConfigReader" should {
     "successfully decode valid JSON" in {
@@ -30,13 +27,7 @@ class JsonConfigReaderSpec extends Specification {
         X12ConfigNode("IEA", Some("IEA"), None, None).leaf
       ))
       val expected = X12Config(getClass.getResource("/example.json").toString, tree)
-
-      "tree equality" >> {
-        implicit def x12ConfigNodeEqual = Equal.equalA[X12ConfigNode]
-        implicit def x12TreeEquals = treeEqual[X12ConfigNode]
-        implicitly[Equal[Tree[X12ConfigNode]]].equal(tree, node.tree) must beTrue
-      }
-      node.name mustEqual expected.name
+      node mustEqual expected
     }
   }
 }
