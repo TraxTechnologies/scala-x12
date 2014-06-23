@@ -53,10 +53,7 @@ object X12Parser {
   private def buildLoop(tree : Tree[ParseTreeNode], segmentSeparator : Char) : Loop = {
     val name = tree.rootLabel.config.name
     val segments = tree.rootLabel.segments
-    tree.loc.hasChildren match {
-      case false => Loop(name, segments, Nil, segmentSeparator)
-      case true => Loop(name, segments, tree.subForest.map(buildLoop(_, segmentSeparator)), segmentSeparator)
-    }
+    Loop(name, segments, tree.subForest.map(buildLoop(_, segmentSeparator)), segmentSeparator)
   }
 
   private def buildTree(matchedSegments: mutable.LinkedHashMap[Segment, Option[TreeLoc[X12ConfigNode]]],
