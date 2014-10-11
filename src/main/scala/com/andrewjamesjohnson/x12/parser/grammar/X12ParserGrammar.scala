@@ -11,9 +11,7 @@ case class DocumentNode(segments: List[SegmentNode]) extends AstNode
 
 case class X12ParserGrammar(segmentSeparator: String, elementSeparator: String, compositeElementSeparator: String) extends Parser {
 
-  def Separator(sep: String): Rule0 = rule { (sep ~ "\n") | (sep ~ "\r\n") | sep }
-
-  def WhiteSpace: Rule0 = rule { zeroOrMore(anyOf(" \n\r\t\f")) }
+  def SeparatorWithLineBreak(sep: String): Rule0 = rule { (sep ~ "\n") | (sep ~ "\r\n") | sep }
 
   def ValueChar: Rule0 = rule { noneOf(segmentSeparator + elementSeparator + compositeElementSeparator) }
 
@@ -25,7 +23,7 @@ case class X12ParserGrammar(segmentSeparator: String, elementSeparator: String, 
 
   def Segment: Rule1[SegmentNode] = rule { oneOrMore(Element, elementSeparator) ~~> SegmentNode }
 
-  def Document: Rule1[DocumentNode] = rule { oneOrMore(Segment, Separator(segmentSeparator)) ~~> DocumentNode }
+  def Document: Rule1[DocumentNode] = rule { oneOrMore(Segment, SeparatorWithLineBreak(segmentSeparator)) ~~> DocumentNode }
 
   def parseX12(contents: String): DocumentNode = {
     val parseResult = RecoveringParseRunner(Document).run(contents)
