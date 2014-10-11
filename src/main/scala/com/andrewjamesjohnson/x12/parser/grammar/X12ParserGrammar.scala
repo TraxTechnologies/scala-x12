@@ -19,7 +19,7 @@ case class X12ParserGrammar(segmentSeparator: String, elementSeparator: String, 
 
   def CompositeElementSeparator: Rule1[List[ValueNode]] = rule { compositeElementSeparator ~> { s: String => List(ValueNode(s)) } }
 
-  def Value: Rule1[ValueNode] = rule { (oneOrMore(ValueChar) | EMPTY) ~> ValueNode }
+  def Value: Rule1[ValueNode] = rule { (oneOrMore(ValueChar) | EMPTY ~ !EOI ) ~> ValueNode }
 
   def Element: Rule1[ElementNode] = rule { (CompositeElementSeparator | oneOrMore(Value, compositeElementSeparator)) ~~> ElementNode }
 

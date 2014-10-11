@@ -1,9 +1,9 @@
 package com.andrewjamesjohnson.x12.parser
 
 import java.net.URL
-import java.util.regex.Pattern
 
 import com.andrewjamesjohnson.x12.config.{TreeV, X12Config, X12ConfigNode}
+import com.andrewjamesjohnson.x12.parser.grammar.X12ParserGrammar
 import com.andrewjamesjohnson.x12.{Document, Loop, Segment}
 
 import scala.collection._
@@ -24,21 +24,20 @@ object X12Parser {
   def parse(input : String, name : String, config : X12Config) : Document = {
     if (input.size < MIN_SIZE) throw new RuntimeException(name + " is too short to be an X12 document!")
 
-    val segmentSeparator = input(SEGMENT_SEP_POS)
-    val elementSeparator = input(ELEMENT_SEP_POS)
-    val compositeElementSeparator = input(COMPOSITE_ELEMENT_SEP_POS)
+    val segmentSeparator = input(SEGMENT_SEP_POS).toString
+    val elementSeparator = input(ELEMENT_SEP_POS).toString
+    val compositeElementSeparator = input(COMPOSITE_ELEMENT_SEP_POS).toString
 
-    val quotedSeparator = Pattern.quote(segmentSeparator.toString)
-    val segmentDelimiter = "%1$s\r\n|%1$s\n|%1$s".format(quotedSeparator)
+    val parser = X12ParserGrammar(segmentSeparator, elementSeparator, compositeElementSeparator)
 
-    val segments = input.split(segmentDelimiter).map(s => Segment(s, elementSeparator, compositeElementSeparator))
+    val segments = parser.parseX12(input).segments.map(Segment(_, elementSeparator, compositeElementSeparator)) 
     val matchedSegments = mutable.LinkedHashMap((for(segment <- segments)
       yield (segment, getMatchingConfigNode(config.tree.loc, segment))):_*)
     buildDocument(matchedSegments, segments, config, name, segmentSeparator)
   }
 
   private def buildDocument(matchedSegments: mutable.LinkedHashMap[Segment, Option[TreeLoc[X12ConfigNode]]],
-                   segments : Array[Segment], config : X12Config, name : String, segmentSeparator : Char) : Document = {
+                   segments : Seq[Segment], config : X12Config, name : String, segmentSeparator : String) : Document = {
     val rootForest = ListBuffer[Tree[ParseTreeNode]]()
     var remaining = segments
     config.tree.subForest.foreach(tree => {
@@ -50,14 +49,14 @@ object X12Parser {
     Document(name, rootForest.result().map(buildLoop(_, segmentSeparator)))
   }
 
-  private def buildLoop(tree : Tree[ParseTreeNode], segmentSeparator : Char) : Loop = {
+  private def buildLoop(tree : Tree[ParseTreeNode], segmentSeparator : String) : Loop = {
     val name = tree.rootLabel.config.name
     val segments = tree.rootLabel.segments
     Loop(name, segments, tree.subForest.map(buildLoop(_, segmentSeparator)), segmentSeparator)
   }
 
   private def buildTree(matchedSegments: mutable.LinkedHashMap[Segment, Option[TreeLoc[X12ConfigNode]]],
-                         segments : Array[Segment], node : TreeLoc[X12ConfigNode]) : (Tree[ParseTreeNode], Array[Segment]) = {
+                         segments : Seq[Segment], node : TreeLoc[X12ConfigNode]) : (Tree[ParseTreeNode], Seq[Segment]) = {
     val (currSegments, rest) = segments.span(s => belongsToCurrent(node, matchedSegments(s)))
     node.hasChildren match {
       case false => (ParseTreeNode(currSegments, node.getLabel).leaf, rest)

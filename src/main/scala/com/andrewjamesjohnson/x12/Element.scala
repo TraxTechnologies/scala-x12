@@ -1,11 +1,9 @@
 package com.andrewjamesjohnson.x12
 
-case class Element(value : String, compositeElementSeparator : Char) extends X12[String, String] {
-  val compositeElementStr = compositeElementSeparator.toString
-  lazy val pieces = value match {
-    case `compositeElementStr` => Array(value)
-    case _ => value.split(compositeElementSeparator)
-  }
+import com.andrewjamesjohnson.x12.parser.grammar.ElementNode
+
+case class Element(elementNode: ElementNode, compositeElementSeparator: String) extends X12[String, String] {
+  lazy val pieces = elementNode.pieces.map(_.value)
 
   override def children: Seq[String] = pieces
 
@@ -17,5 +15,5 @@ case class Element(value : String, compositeElementSeparator : Char) extends X12
 
   override def apply(idx: Int): String = pieces(idx)
 
-  override def toString(): String = pieces.mkString(compositeElementStr)
+  override def toString(): String = pieces.mkString(compositeElementSeparator)
 }
