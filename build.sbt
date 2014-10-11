@@ -4,7 +4,8 @@ version := "0.1"
 
 libraryDependencies ++= Seq(
   "io.argonaut" %% "argonaut" % "6.0.4",
-  "org.scalaz" %% "scalaz-core" % "7.0.6"
+  "org.scalaz" %% "scalaz-core" % "7.0.6",
+  "org.parboiled" %% "parboiled-scala" % "1.1.6"
 )
 
 libraryDependencies ++= Seq(
