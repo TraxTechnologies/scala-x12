@@ -16,4 +16,13 @@ case class Loop(name : String, segments : Seq[Segment], loops : Seq[Loop], segme
       case _ => segmentString + segmentSeparator + "\n" + loops.map(_.toString()).mkString("\n")
     }
   }
+
+  def debug(indent: Int): Unit = {
+    for (i <- 1 to indent) print("\t")
+    println("Loop start: " + name)
+    segments.foreach(_.debug(indent + 1))
+    loops.foreach(_.debug(indent + 1))
+    for (i <- 1 to indent) print("\t")
+    println("Loop end: " + name)
+  }
 }

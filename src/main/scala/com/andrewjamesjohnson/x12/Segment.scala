@@ -16,4 +16,12 @@ case class Segment(segmentNode: SegmentNode, elementSeparator : String, composit
   override def apply(idx: Int): Element = pieces(idx)
 
   override def toString(): String = pieces.map(_.toString()).mkString(elementSeparator)
+
+  def debug(indent: Int): Unit = {
+    for (i <- 1 to indent) print("\t")
+    println("Segment start: " + name)
+    pieces.foreach(_.debug(indent + 1))
+    for (i <- 1 to indent) print("\t")
+    println("Segment end: " + name)
+  }
 }

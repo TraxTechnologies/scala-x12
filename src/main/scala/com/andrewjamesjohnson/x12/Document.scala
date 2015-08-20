@@ -13,4 +13,10 @@ case class Document(name : String, loops : Seq[Loop]) extends X12[Loop, Loop] {
   override def toString(): String = {
     loops.map(_.toString()).mkString("\n")
   }
+
+  def debug(): Unit = {
+    println("Document start: " + name)
+    loops.foreach(_.debug(1))
+    println("Document end: " + name)
+  }
 }

@@ -11,6 +11,7 @@ class X12ParserSpec extends Specification {
       val config = JsonConfigReader.read(getClass.getResource("/example.json"))
       val document = X12Parser.parse(getClass.getResource("/example835.txt"), config)
       val input = Source.fromURL(getClass.getResource("/example835.txt")).mkString
+      document.debug()
       input mustEqual document.toString()
     }
   }
