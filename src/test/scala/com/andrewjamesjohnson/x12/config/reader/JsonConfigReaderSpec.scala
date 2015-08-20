@@ -6,7 +6,7 @@ import org.specs2.mutable._
 class JsonConfigReaderSpec extends Specification {
   "JsonConfigReader" should {
     "successfully decode valid JSON" in {
-      val node = JsonConfigReader.read(getClass.getResource("/example.json"))
+      val node = JsonConfigReader.read(getClass.getResource("/example835.json"))
 
       val tree = X12ConfigNode("X12", None, None, None).node(Stream(
         X12ConfigNode("ISA", Some("ISA"), None, None).node(Stream(
@@ -26,7 +26,7 @@ class JsonConfigReaderSpec extends Specification {
         )),
         X12ConfigNode("IEA", Some("IEA"), None, None).leaf
       ))
-      val expected = X12Config(getClass.getResource("/example.json").toString, tree)
+      val expected = X12Config(getClass.getResource("/example835.json").toString, tree)
       node mustEqual expected
     }
   }

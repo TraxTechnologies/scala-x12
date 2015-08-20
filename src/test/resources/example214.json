@@ -1,0 +1,10 @@
+{"name": "X12", "children": [
+  {"name": "ISA", "segment_id": "ISA", "children": [
+    {"name": "GS", "segment_id": "GS", "children": [
+      {"name": "ST", "segment_id": "ST", "segment_qualifiers": ["214"], "qualifier_position": 1},
+      {"name": "SE", "segment_id": "SE"}
+    ]},
+    {"name": "GE", "segment_id": "GE"}
+  ]},
+  {"name": "IEA", "segment_id": "IEA"}
+]}

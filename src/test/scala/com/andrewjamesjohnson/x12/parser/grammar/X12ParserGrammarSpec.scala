@@ -7,7 +7,7 @@ import scala.io.Source
 class X12ParserGrammarSpec extends Specification {
   "X12ParserGrammar" should {
     "parse an X12 document" in {
-      val input = Source.fromURL(getClass.getResource("/example835.txt")).mkString
+      val input = Source.fromURL(getClass.getResource("/example835.x12")).mkString
       val parser = X12ParserGrammar("~", "*", ":")
       val result = parser.parseX12(input)
 
