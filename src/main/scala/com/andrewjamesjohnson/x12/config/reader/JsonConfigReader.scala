@@ -23,7 +23,7 @@ object JsonConfigReader extends X12ConfigReader {
 
   override def read(url: URL): X12Config = decodeJson(url.toString, Source.fromURL(url).mkString)
 
-  private def decodeJson(name : String, input : String) : X12Config = {
+  def decodeJson(name : String, input : String) : X12Config = {
     input.parse match {
       case -\/(error) => throw new RuntimeException(error)
       case \/-(json) => X12Config(name, createTree(json))
