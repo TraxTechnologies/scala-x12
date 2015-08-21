@@ -1,6 +1,8 @@
 package com.andrewjamesjohnson.x12
 
 import com.andrewjamesjohnson.x12.parser.grammar.SegmentNode
+import org.json4s.JsonAST.{JField, JObject, JArray, JValue}
+import org.json4s.jackson.JsonMethods._
 
 case class Segment(segmentNode: SegmentNode, elementSeparator : String, compositeElementSeparator : String) extends X12[Element, Element] {
   lazy val pieces = segmentNode.elements.map(Element(_, compositeElementSeparator))
@@ -23,5 +25,9 @@ case class Segment(segmentNode: SegmentNode, elementSeparator : String, composit
     pieces.foreach(_.debug(indent + 1))
     for (i <- 1 to indent) print("\t")
     println("Segment end: " + name)
+  }
+
+  def toJson: JValue = {
+    JObject(JField(name, JArray(children.drop(1).map(_.toJson).toList)))
   }
 }

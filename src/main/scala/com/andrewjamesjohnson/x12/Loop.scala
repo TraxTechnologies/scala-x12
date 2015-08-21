@@ -1,5 +1,7 @@
 package com.andrewjamesjohnson.x12
 
+import org.json4s.JsonAST.{JArray, JValue}
+
 case class Loop(name : String, segments : Seq[Segment], loops : Seq[Loop], segmentSeparator : String) extends X12[Loop, Segment] {
   override def children: Seq[Loop] = loops
 
@@ -24,5 +26,9 @@ case class Loop(name : String, segments : Seq[Segment], loops : Seq[Loop], segme
     loops.foreach(_.debug(indent + 1))
     for (i <- 1 to indent) print("\t")
     println("Loop end: " + name)
+  }
+
+  def toJson: JValue = {
+    JArray((segments.map(_.toJson) ++ loops.map(_.toJson)).toList)
   }
 }

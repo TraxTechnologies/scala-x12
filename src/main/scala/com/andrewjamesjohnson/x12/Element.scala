@@ -1,6 +1,10 @@
 package com.andrewjamesjohnson.x12
 
 import com.andrewjamesjohnson.x12.parser.grammar.ElementNode
+import org.json4s.JsonAST.{JString, JArray, JValue}
+import org.json4s.JsonDSL._
+import org.json4s._
+import org.json4s.jackson.JsonMethods._
 
 case class Element(elementNode: ElementNode, compositeElementSeparator: String) extends X12[String, String] {
   lazy val pieces = elementNode.pieces.map(_.value)
@@ -20,5 +24,9 @@ case class Element(elementNode: ElementNode, compositeElementSeparator: String) 
   def debug(indent: Int): Unit = {
     for (i <- 1 to indent) print("\t")
     println(s"Element $name: " + pieces)
+  }
+
+  def toJson: JValue = {
+    render(pieces)
   }
 }

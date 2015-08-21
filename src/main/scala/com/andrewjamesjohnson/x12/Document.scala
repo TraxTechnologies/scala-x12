@@ -1,5 +1,7 @@
 package com.andrewjamesjohnson.x12
 
+import org.json4s.JsonAST.{JArray, JValue}
+
 case class Document(name : String, loops : Seq[Loop]) extends X12[Loop, Loop] {
 
   override def children: Seq[Loop] = loops
@@ -18,5 +20,9 @@ case class Document(name : String, loops : Seq[Loop]) extends X12[Loop, Loop] {
     println("Document start: " + name)
     loops.foreach(_.debug(1))
     println("Document end: " + name)
+  }
+
+  def toJson: JValue = {
+    JArray(loops.map(_.toJson).toList)
   }
 }
