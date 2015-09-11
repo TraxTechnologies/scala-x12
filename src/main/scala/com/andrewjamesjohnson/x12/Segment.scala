@@ -28,11 +28,15 @@ case class Segment(segmentNode: SegmentNode, elementSeparator : String, composit
     println("Segment end: " + name)
   }
 
-  def toOldJson: JValue = {
-    name -> render(children.drop(1).map(_.toOldJson))
+  def toOldOldJson: JValue = {
+    name -> render(children.drop(1).map(_.toOldOldJson))
+  }
+
+  def toOldJson: JObject = {
+    name -> render(children.map(_.toOldJson))
   }
 
   def toJson: JObject = {
-    name -> render(children.map(_.toJson))
+    name -> ("content" -> render(children.map(_.toJson)))
   }
 }

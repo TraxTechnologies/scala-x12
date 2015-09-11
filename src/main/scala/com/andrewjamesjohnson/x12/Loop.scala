@@ -4,6 +4,8 @@ import org.json4s.JsonAST.{JObject, JValue}
 import org.json4s.JsonDSL._
 import org.json4s.jackson.JsonMethods._
 
+import scala.language.postfixOps
+
 case class Loop(name : String, segments : Seq[Segment], loops : Seq[Loop], segmentSeparator : String) extends X12[Loop, Segment] {
   override def children: Seq[Loop] = loops
 
@@ -30,15 +32,26 @@ case class Loop(name : String, segments : Seq[Segment], loops : Seq[Loop], segme
     println("Loop end: " + name)
   }
 
-  def toOldJson: JValue = {
-    render(segments.map(_.toOldJson) ++ loops.map(_.toOldJson))
+  def toOldOldJson: JValue = {
+    render(segments.map(_.toOldOldJson) ++ loops.map(_.toOldOldJson))
   }
 
-  def toJson: JValue = {
-    val json = segments.map(_.toJson).foldLeft(JObject()) { (i, j) => i ~ j }
+  def toOldJson: JValue = {
+    val json = segments.map(_.toOldJson).foldLeft(JObject()) { (i, j) => i ~ j }
     if (children.isEmpty)
       json
     else
-      json ~ ("content" -> render(loops.map(_.toJson)))
+      json ~ ("content" -> render(loops.map(_.toOldJson)))
+  }
+
+  def toJson: JObject = {
+    val root = segments.head.toJson
+    val child = (root \ segments.head.name).asInstanceOf[JObject]
+
+    val json = segments.tail.map(_.toJson).foldLeft(child) { (i, j) => i ~ j }
+    segments.head.name -> (if (children.isEmpty)
+      json
+    else
+      loops.map(_.toJson).foldLeft(json) { (i, j) => i ~ j })
   }
 }

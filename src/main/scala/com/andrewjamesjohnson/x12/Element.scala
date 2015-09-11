@@ -26,8 +26,16 @@ case class Element(elementNode: ElementNode, compositeElementSeparator: String) 
     println(s"Element $name: " + pieces)
   }
 
-  def toOldJson: JValue = {
+  def toOldOldJson: JValue = {
     render(pieces)
+  }
+
+  def toOldJson: JValue = {
+    children.size match {
+      case 0 => JNothing
+      case 1 => render(children.head)
+      case _ => render(children)
+    }
   }
 
   def toJson: JValue = {

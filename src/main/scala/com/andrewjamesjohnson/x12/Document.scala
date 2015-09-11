@@ -25,6 +25,10 @@ case class Document(name : String, loops : Seq[Loop]) extends X12[Loop, Loop] {
     println("Document end: " + name)
   }
 
+  def toOldOldJson: JValue = {
+    render(loops.map(_.toOldOldJson))
+  }
+
   def toOldJson: JValue = {
     render(loops.map(_.toOldJson))
   }

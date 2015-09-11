@@ -2,7 +2,7 @@ name := "scala-x12-trax"
 
 organization := "com.trax.platform"
 
-version := "0.1.3"
+version := "0.1.4"
 
 scalaVersion := "2.11.7"
 
