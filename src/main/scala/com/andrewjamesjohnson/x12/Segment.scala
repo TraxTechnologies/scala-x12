@@ -1,7 +1,8 @@
 package com.andrewjamesjohnson.x12
 
 import com.andrewjamesjohnson.x12.parser.grammar.SegmentNode
-import org.json4s.JsonAST.{JField, JObject, JArray, JValue}
+import org.json4s.JsonAST.{JObject, JValue}
+import org.json4s.JsonDSL._
 import org.json4s.jackson.JsonMethods._
 
 case class Segment(segmentNode: SegmentNode, elementSeparator : String, compositeElementSeparator : String) extends X12[Element, Element] {
@@ -13,7 +14,7 @@ case class Segment(segmentNode: SegmentNode, elementSeparator : String, composit
 
   override def iterator: Iterator[Element] = pieces.iterator
 
-  override def name: String = pieces(0).name
+  override def name: String = pieces.head.name
 
   override def apply(idx: Int): Element = pieces(idx)
 
@@ -27,7 +28,11 @@ case class Segment(segmentNode: SegmentNode, elementSeparator : String, composit
     println("Segment end: " + name)
   }
 
-  def toJson: JValue = {
-    JObject(JField(name, JArray(children.drop(1).map(_.toJson).toList)))
+  def toOldJson: JValue = {
+    name -> render(children.drop(1).map(_.toOldJson))
+  }
+
+  def toJson: JObject = {
+    name -> render(children.map(_.toJson))
   }
 }

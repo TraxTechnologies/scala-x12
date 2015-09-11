@@ -15,6 +15,9 @@ class X12Parser835Spec extends Specification {
       document.debug()
 
       println(pretty(document.toJson))
+
+      println(pretty(document.toOldJson))
+
       input mustEqual document.toString()
     }
   }

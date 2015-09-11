@@ -1,6 +1,9 @@
 package com.andrewjamesjohnson.x12
 
-import org.json4s.JsonAST.{JArray, JValue}
+import org.json4s.JsonAST.JValue
+import org.json4s.JsonDSL._
+import org.json4s.jackson.JsonMethods._
+
 
 case class Document(name : String, loops : Seq[Loop]) extends X12[Loop, Loop] {
 
@@ -22,7 +25,11 @@ case class Document(name : String, loops : Seq[Loop]) extends X12[Loop, Loop] {
     println("Document end: " + name)
   }
 
+  def toOldJson: JValue = {
+    render(loops.map(_.toOldJson))
+  }
+
   def toJson: JValue = {
-    JArray(loops.map(_.toJson).toList)
+    render(loops.map(_.toJson))
   }
 }

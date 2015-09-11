@@ -1,6 +1,8 @@
 package com.andrewjamesjohnson.x12
 
-import org.json4s.JsonAST.{JArray, JValue}
+import org.json4s.JsonAST.{JObject, JValue}
+import org.json4s.JsonDSL._
+import org.json4s.jackson.JsonMethods._
 
 case class Loop(name : String, segments : Seq[Segment], loops : Seq[Loop], segmentSeparator : String) extends X12[Loop, Segment] {
   override def children: Seq[Loop] = loops
@@ -28,7 +30,15 @@ case class Loop(name : String, segments : Seq[Segment], loops : Seq[Loop], segme
     println("Loop end: " + name)
   }
 
+  def toOldJson: JValue = {
+    render(segments.map(_.toOldJson) ++ loops.map(_.toOldJson))
+  }
+
   def toJson: JValue = {
-    JArray((segments.map(_.toJson) ++ loops.map(_.toJson)).toList)
+    val json = segments.map(_.toJson).foldLeft(JObject()) { (i, j) => i ~ j }
+    if (children.isEmpty)
+      json
+    else
+      json ~ ("content" -> render(loops.map(_.toJson)))
   }
 }

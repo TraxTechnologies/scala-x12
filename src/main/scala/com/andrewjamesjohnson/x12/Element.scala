@@ -1,7 +1,7 @@
 package com.andrewjamesjohnson.x12
 
 import com.andrewjamesjohnson.x12.parser.grammar.ElementNode
-import org.json4s.JsonAST.{JString, JArray, JValue}
+import org.json4s.JsonAST.JValue
 import org.json4s.JsonDSL._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
@@ -15,7 +15,7 @@ case class Element(elementNode: ElementNode, compositeElementSeparator: String) 
 
   override def iterator: Iterator[String] = pieces.iterator
 
-  override def name: String = pieces(0)
+  override def name: String = pieces.head
 
   override def apply(idx: Int): String = pieces(idx)
 
@@ -26,7 +26,15 @@ case class Element(elementNode: ElementNode, compositeElementSeparator: String) 
     println(s"Element $name: " + pieces)
   }
 
-  def toJson: JValue = {
+  def toOldJson: JValue = {
     render(pieces)
+  }
+
+  def toJson: JValue = {
+    children.size match {
+      case 0 => JNothing
+      case 1 => render(children.head)
+      case _ => render(children)
+    }
   }
 }
